@@ -46,7 +46,6 @@ describe('VariableItem', () => {
 				existingVariables={{}}
 				onValueUpdate={mockOnValueUpdate}
 				onAllSelectedUpdate={mockOnAllSelectedUpdate}
-				lastUpdatedVar=""
 			/>,
 		);
 
@@ -60,7 +59,6 @@ describe('VariableItem', () => {
 				existingVariables={{}}
 				onValueUpdate={mockOnValueUpdate}
 				onAllSelectedUpdate={mockOnAllSelectedUpdate}
-				lastUpdatedVar=""
 			/>,
 		);
 		expect(screen.getByPlaceholderText('Enter value')).toBeInTheDocument();
@@ -73,7 +71,6 @@ describe('VariableItem', () => {
 				existingVariables={{}}
 				onValueUpdate={mockOnValueUpdate}
 				onAllSelectedUpdate={mockOnAllSelectedUpdate}
-				lastUpdatedVar=""
 			/>,
 		);
 		const inputElement = screen.getByPlaceholderText('Enter value');
@@ -92,7 +89,6 @@ describe('VariableItem', () => {
 				existingVariables={{}}
 				onValueUpdate={mockOnValueUpdate}
 				onAllSelectedUpdate={mockOnAllSelectedUpdate}
-				lastUpdatedVar=""
 			/>,
 		);
 
@@ -112,7 +108,6 @@ describe('VariableItem', () => {
 				existingVariables={{}}
 				onValueUpdate={mockOnValueUpdate}
 				onAllSelectedUpdate={mockOnAllSelectedUpdate}
-				lastUpdatedVar=""
 			/>,
 		);
 
@@ -126,7 +121,6 @@ describe('VariableItem', () => {
 				existingVariables={{}}
 				onValueUpdate={mockOnValueUpdate}
 				onAllSelectedUpdate={mockOnAllSelectedUpdate}
-				lastUpdatedVar=""
 			/>,
 		);
 
@@ -141,7 +135,6 @@ describe('VariableItem', () => {
 				existingVariables={{}}
 				onValueUpdate={mockOnValueUpdate}
 				onAllSelectedUpdate={mockOnAllSelectedUpdate}
-				lastUpdatedVar=""
 			/>,
 		);
 
@@ -158,7 +151,6 @@ describe('VariableItem', () => {
 				existingVariables={{}}
 				onValueUpdate={mockOnValueUpdate}
 				onAllSelectedUpdate={mockOnAllSelectedUpdate}
-				lastUpdatedVar=""
 			/>,
 		);
 
