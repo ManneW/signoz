@@ -19,14 +19,8 @@ function DashboardVariableSelection(): JSX.Element | null {
 	const { variables } = data || {};
 
 	const [update, setUpdate] = useState<boolean>(false);
-	const [lastUpdatedVar, setLastUpdatedVar] = useState<string>('');
 
 	const { role } = useSelector<AppState, AppReducer>((state) => state.app);
-
-	const onVarChanged = (name: string): void => {
-		setLastUpdatedVar(name);
-		setUpdate(!update);
-	};
 
 	const updateMutation = useUpdateDashboard();
 	const { notifications } = useNotifications();
@@ -75,7 +69,7 @@ function DashboardVariableSelection(): JSX.Element | null {
 			updateVariables(updatedVariablesData);
 		}
 
-		onVarChanged(name);
+		setUpdate(!update);
 	};
 	const onAllSelectedUpdate = (
 		name: string,
@@ -87,29 +81,32 @@ function DashboardVariableSelection(): JSX.Element | null {
 		if (role !== 'VIEWER') {
 			updateVariables(updatedVariablesData);
 		}
-		onVarChanged(name);
+
+		setUpdate(!update);
 	};
 
 	if (!variables) {
 		return null;
 	}
 
+	const variablesKeys = sortBy(Object.keys(variables));
+
 	return (
 		<Row>
-			{map(sortBy(Object.keys(variables)), (variableName) => (
-				<VariableItem
-					key={`${variableName}${variables[variableName].modificationUUID}`}
-					existingVariables={variables}
-					variableData={{
-						name: variableName,
-						...variables[variableName],
-						change: update,
-					}}
-					onValueUpdate={onValueUpdate}
-					onAllSelectedUpdate={onAllSelectedUpdate}
-					lastUpdatedVar={lastUpdatedVar}
-				/>
-			))}
+			{variablesKeys &&
+				map(variablesKeys, (variableName) => (
+					<VariableItem
+						key={`${variableName}${variables[variableName].modificationUUID}`}
+						existingVariables={variables}
+						variableData={{
+							name: variableName,
+							...variables[variableName],
+							change: update,
+						}}
+						onValueUpdate={onValueUpdate}
+						onAllSelectedUpdate={onAllSelectedUpdate}
+					/>
+				))}
 		</Row>
 	);
 }
