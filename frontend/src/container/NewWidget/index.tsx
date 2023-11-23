@@ -18,10 +18,11 @@ import {
 	getSelectedWidgetIndex,
 } from 'providers/Dashboard/util';
 import { useCallback, useMemo, useState } from 'react';
+import { Layout } from 'react-grid-layout';
 import { useSelector } from 'react-redux';
 import { generatePath, useLocation, useParams } from 'react-router-dom';
 import { AppState } from 'store/reducers';
-import { Widgets } from 'types/api/dashboard/getAll';
+import { Dashboard, Widgets } from 'types/api/dashboard/getAll';
 import { EQueryType } from 'types/common/dashboard';
 import { DataSource } from 'types/common/queryBuilder';
 import AppReducer from 'types/reducer/app';
@@ -41,7 +42,7 @@ import {
 import { NewWidgetProps } from './types';
 
 function NewWidget({ selectedGraph }: NewWidgetProps): JSX.Element {
-	const { selectedDashboard } = useDashboard();
+	const { selectedDashboard, setLayouts, setSelectedDashboard } = useDashboard();
 
 	const { currentQuery } = useQueryBuilder();
 
@@ -140,44 +141,69 @@ function NewWidget({ selectedGraph }: NewWidgetProps): JSX.Element {
 			return;
 		}
 
-		updateDashboardMutation.mutateAsync(
+		const allLayout = selectedDashboard.data.layout || ([] as Layout[]);
+
+		// find the current layout index
+		const currentLayout =
+			selectedDashboard?.data?.layout?.findIndex(
+				(layout) => layout.i === selectedWidget?.id,
+			) || 0;
+
+		const preLayout =
+			selectedDashboard?.data?.layout?.slice(0, currentLayout) || [];
+		const postLayout =
+			selectedDashboard?.data?.layout?.slice(currentLayout + 1) || [];
+
+		const updatedLayout: Layout[] = [
 			{
-				uuid: selectedDashboard.uuid,
-				data: {
-					...selectedDashboard.data,
-					widgets: [
-						...preWidgets,
-						{
-							...(selectedWidget || ({} as Widgets)),
-							description,
-							timePreferance: selectedTime.enum,
-							isStacked: stacked,
-							opacity,
-							nullZeroValues: selectedNullZeroValue,
-							title,
-							yAxisUnit,
-							panelTypes: graphType,
-							thresholds,
-						},
-						...afterWidgets,
-					],
-				},
+				...allLayout[currentLayout],
+				x: 0,
+				y: 0,
 			},
-			{
-				onSuccess: () => {
-					featureResponse.refetch();
-					history.push(generatePath(ROUTES.DASHBOARD, { dashboardId }));
-				},
-				onError: () => {
-					notifications.error({
-						message: SOMETHING_WENT_WRONG,
-					});
-				},
+			...preLayout,
+			...postLayout,
+		];
+
+		const dashboard: Dashboard = {
+			...selectedDashboard,
+			uuid: selectedDashboard.uuid,
+			data: {
+				...selectedDashboard.data,
+				widgets: [
+					...preWidgets,
+					{
+						...(selectedWidget || ({} as Widgets)),
+						description,
+						timePreferance: selectedTime.enum,
+						isStacked: stacked,
+						opacity,
+						nullZeroValues: selectedNullZeroValue,
+						title,
+						yAxisUnit,
+						panelTypes: graphType,
+						thresholds,
+					},
+					...afterWidgets,
+				],
+				layout: updatedLayout,
 			},
-		);
+		};
+
+		updateDashboardMutation.mutateAsync(dashboard, {
+			onSuccess: () => {
+				setLayouts(updatedLayout);
+				setSelectedDashboard(dashboard);
+				featureResponse.refetch();
+				history.push(generatePath(ROUTES.DASHBOARD, { dashboardId }));
+			},
+			onError: () => {
+				notifications.error({
+					message: SOMETHING_WENT_WRONG,
+				});
+			},
+		});
 	}, [
 		selectedDashboard,
-		updateDashboardMutation,
 		preWidgets,
 		selectedWidget,
 		description,
@@ -190,6 +216,9 @@ function NewWidget({ selectedGraph }: NewWidgetProps): JSX.Element {
 		graphType,
 		thresholds,
 		afterWidgets,
+		updateDashboardMutation,
+		setSelectedDashboard,
+		setLayouts,
 		featureResponse,
 		dashboardId,
 		notifications,

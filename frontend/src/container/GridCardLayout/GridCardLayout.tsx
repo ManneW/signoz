@@ -158,16 +158,18 @@ function GraphLayout({ onAddPanelHandler }: GraphLayoutProps): JSX.Element {
 					draggableHandle=".drag-handle"
 					layout={layouts}
 				>
-					{layouts.map((layout) => {
+					{layouts.map((layout, index) => {
 						const { i: id } = layout;
 						const currentWidget = (widgets || [])?.find((e) => e.id === id);
+
+						console.log(layout.i, index);
 
 						return (
 							<CardContainer
 								className={isDashboardLocked ? '' : 'enable-resize'}
 								isDarkMode={isDarkMode}
 								key={id}
-								data-grid={layout}
+								data-grid={JSON.stringify(currentWidget)}
 							>
 								<Card
 									className="grid-item"
