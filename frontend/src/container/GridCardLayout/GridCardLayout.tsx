@@ -158,11 +158,9 @@ function GraphLayout({ onAddPanelHandler }: GraphLayoutProps): JSX.Element {
 					draggableHandle=".drag-handle"
 					layout={layouts}
 				>
-					{layouts.map((layout, index) => {
+					{layouts.map((layout) => {
 						const { i: id } = layout;
 						const currentWidget = (widgets || [])?.find((e) => e.id === id);
-
-						console.log(layout.i, index);
 
 						return (
 							<CardContainer

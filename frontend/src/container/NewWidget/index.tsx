@@ -149,20 +149,22 @@ function NewWidget({ selectedGraph }: NewWidgetProps): JSX.Element {
 				(layout) => layout.i === selectedWidget?.id,
 			) || 0;
 
-		const preLayout =
-			selectedDashboard?.data?.layout?.slice(0, currentLayout) || [];
-		const postLayout =
-			selectedDashboard?.data?.layout?.slice(currentLayout + 1) || [];
-
-		const updatedLayout: Layout[] = [
-			{
-				...allLayout[currentLayout],
-				x: 0,
-				y: 0,
-			},
-			...preLayout,
-			...postLayout,
-		];
+		// swap the current layout with the first layout
+		const updatedLayout = allLayout.map((layout, index) => {
+			if (index === 0) {
+				return {
+					...layout,
+					i: selectedWidget?.id || '',
+				};
+			}
+			if (index === currentLayout) {
+				return {
+					...layout,
+					i: preWidgets[0]?.id || '',
+				};
+			}
+			return layout;
+		});
 
 		const dashboard: Dashboard = {
 			...selectedDashboard,
